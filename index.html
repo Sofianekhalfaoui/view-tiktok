@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>زيادة مشاهدات تيك توك</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(270deg, #ff0050, #000000);
+      background-size: 400% 400%;
+      animation: gradientBG 10s ease infinite;
+      color: white;
+      text-align: center;
+      min-height: 100vh;
+    }
+
+    @keyframes gradientBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+
+    .welcome, .main-content {
+      display: none;
+      padding: 50px 20px;
+    }
+
+    .welcome {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+    }
+
+    button {
+      background-color: #ff0050;
+      border: none;
+      padding: 15px 30px;
+      color: white;
+      font-size: 1.2em;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: transform 0.3s, background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #e60045;
+      transform: scale(1.1);
+    }
+
+    .container input {
+      display: block;
+      width: 80%;
+      max-width: 400px;
+      margin: 10px auto;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      font-size: 1em;
+    }
+
+    .progress-container {
+      display: none;
+      width: 80%;
+      max-width: 400px;
+      margin: 20px auto;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-bar {
+      height: 20px;
+      width: 0%;
+      background-color: #00ff88;
+    }
+
+    #progressText {
+      position: absolute;
+      width: 100%;
+      top: 0;
+      left: 0;
+      line-height: 20px;
+    }
+
+    .success-banner {
+      display: none;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    .note {
+      margin-top: 30px;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+  <!-- واجهة البداية -->
+  <div class="welcome" id="welcomeScreen">
+    <h1>مرحباً بك في خدمة زيادة مشاهدات تيك توك</h1>
+    <button onclick="showMain()">ابدأ الآن</button>
+  </div>
+
+  <!-- النموذج الرئيسي -->
+  <div class="main-content" id="mainContent">
+    <div class="container">
+      <h1>زيادة مشاهدات تيك توك</h1>
+      <p>ادخل رابط الفيديو وعدد المشاهدات المطلوبة</p>
+
+      <form id="viewForm">
+        <input type="url" id="videoLink" placeholder="رابط فيديو تيك توك" required>
+        <input type="number" id="viewCount" placeholder="عدد المشاهدات" required min="10">
+        <button type="submit">إرسال الطلب</button>
+      </form>
+
+      <div class="progress-container" id="progressContainer">
+        <div class="progress-bar" id="progressBar"></div>
+        <span id="progressText">0%</span>
+      </div>
+
+      <div class="success-banner" id="successBanner"></div>
+      <p class="note">خدمة آلية متصلة بموقع smmfollows</p>
+    </div>
+  </div>
+
+  <script>
+    function showMain() {
+      document.getElementById('welcomeScreen').style.display = 'none';
+      document.getElementById('mainContent').style.display = 'block';
+    }
+
+    const form = document.getElementById('viewForm');
+    const progressContainer = document.getElementById('progressContainer');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    const successBanner = document.getElementById('successBanner');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const link = document.getElementById('videoLink').value;
+      const count = document.getElementById('viewCount').value;
+
+      progressContainer.style.display = 'block';
+      progressBar.style.width = '0%';
+      progressText.innerText = '0%';
+      successBanner.style.display = 'none';
+
+      let percent = 0;
+      const interval = setInterval(() => {
+        percent += 5;
+        progressBar.style.width = percent + '%';
+        progressText.innerText = percent + '%';
+        if (percent >= 100) {
+          clearInterval(interval);
+
+         fetch('https://view-tiktok-ieyy.onrender.com//sendViews', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ link, count })
+          })
+          .then(res => res.json())
+          .then(data => {
+            successBanner.style.display = 'block';
+            if (data.success) {
+              successBanner.innerText = data.message;
+              successBanner.style.color = "#00ff88";
+            } else {
+              successBanner.innerText = "فشل: " + data.message;
+              successBanner.style.color = "orange";
+            }
+          })
+          .catch(err => {
+            successBanner.style.display = 'block';
+            successBanner.innerText = "حدث خطأ في الاتصال بالخادم";
+            successBanner.style.color = "red";
+          });
+        }
+      }, 100);
+    });
+
+    window.onload = () => {
+      document.getElementById('welcomeScreen').style.display = 'flex';
+    };
+  </script>
+</body>
+</html>
